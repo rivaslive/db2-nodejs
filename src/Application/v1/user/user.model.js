@@ -2,15 +2,21 @@ import mongoose from 'mongoose';
 import getModelName from 'Utils/getModelName';
 
 const { Schema } = mongoose;
-const { singularName, pluralName } = getModelName('example');
+const { singularName, pluralName } = getModelName('user');
 
 const schema = new Schema(
   {
     fullName: {
       type: String,
+      required: true,
     },
     email: {
       type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,
@@ -37,5 +43,5 @@ schema.set('toJSON', {
 });
 
 // rename name Example to singular Model
-export default mongoose.models[singularName] ||
-  mongoose.model(pluralName, schema);
+export default mongoose.models[singularName]
+  || mongoose.model(pluralName, schema);
