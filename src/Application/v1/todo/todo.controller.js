@@ -1,8 +1,12 @@
-import UserModel from './user.model';
+import ToDoModel from './todo.model';
 
-export const getAllUser = async (req, res) => {
+export const getAllTodo = async (req, res) => {
+  const { state = 'active,draft' } = req.query;
+
+  const stateArray = state?.split(',');
+
   try {
-    const data = await UserModel.find({ status: 'active' });
+    const data = await ToDoModel.find({ status: stateArray });
     return res.status(200).json(data);
   } catch (error) {
     console.error(error);
@@ -13,22 +17,21 @@ export const getAllUser = async (req, res) => {
   }
 };
 
-export const createUser = async (req, res) => {
-  const { fullName, email, password } = req.body;
+export const createTodo = async (req, res) => {
+  const { content, user } = req.body;
 
-  if (!fullName || !email || !password) {
+  if (!content || !user) {
     return res.status(400).json({
       message:
-        'Faltan datos, la consulta debe contener fullName, email y password',
+        'Faltan datos, la consulta debe contener content y user',
       code: 400,
     });
   }
 
   try {
-    const data = await UserModel.create({
-      fullName,
-      email,
-      password,
+    const data = await ToDoModel.create({
+      content,
+      user
     });
     return res.status(200).json(data);
   } catch (error) {
@@ -52,10 +55,10 @@ export const updateUser = async (req, res) => {
   }
 
   try {
-    const data = await UserModel.findByIdAndUpdate(userId, payload);
+    const data = await ToDoModel.findByIdAndUpdate(userId, payload);
     return res.status(200).json({
       ...data,
-      ...payload
+      ...payload,
     });
   } catch (error) {
     console.error(error);
@@ -77,7 +80,7 @@ export const deleteUser = async (req, res) => {
   }
 
   try {
-    await UserModel.findByIdAndUpdate(userId, { status: 'inactive' });
+    await ToDoModel.findByIdAndUpdate(userId, { status: 'inactive' });
     return res.status(200).json({
       message: 'Usuario eliminado',
       code: 200,

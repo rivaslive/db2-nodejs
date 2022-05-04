@@ -1,15 +1,15 @@
 import express from 'express';
 import {
-  getAllUser,
-  createUser,
+  getAllTodo,
+  createTodo,
   deleteUser,
   updateUser,
-} from './user.controller';
+} from './todo.controller';
 
 const router = express.Router();
 
-router.get('/', getAllUser); // get all
-router.post('/', createUser); // create user
+router.get('/', getAllTodo); // get all
+router.post('/', createTodo); // create user
 router.put('/:userId', updateUser); // update user
 router.delete('/:userId', deleteUser); // delete user
 

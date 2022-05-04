@@ -1,27 +1,28 @@
 import mongoose from 'mongoose';
 import getModelName from 'Utils/getModelName';
+import { pluralName as userModelName } from '../user/user.model';
 
 const { Schema } = mongoose;
-export const { singularName, pluralName } = getModelName('user');
+const { singularName, pluralName } = getModelName('todo');
 
 const schema = new Schema(
   {
-    fullName: {
+    content: {
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: userModelName,
       required: true,
     },
     status: {
       type: String,
-      enum: ['active', 'inactive'],
-      default: 'active',
+      enum: ['active', 'finished', 'draft'],
+      default: 'draft',
+    },
+    finished_at: {
+      type: Date,
     },
     created_at: {
       type: Date,
@@ -43,5 +44,5 @@ schema.set('toJSON', {
 });
 
 // rename name Example to singular Model
-export default mongoose.models[singularName]
-  || mongoose.model(pluralName, schema);
+export default mongoose.models[singularName] ||
+  mongoose.model(pluralName, schema);
