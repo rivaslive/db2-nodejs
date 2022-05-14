@@ -1,4 +1,4 @@
-import ToDoModel from './todo.model';
+import ToDoModel, { statusToDoType } from './todo.model';
 
 export const getAllTodo = async (req, res) => {
   const { state = 'active,draft' } = req.query;
@@ -6,7 +6,11 @@ export const getAllTodo = async (req, res) => {
   const stateArray = state?.split(',');
 
   try {
-    const data = await ToDoModel.find({ status: stateArray });
+    const data = await ToDoModel.find({ status: stateArray }).populate('user', [
+      'id',
+      'fullName',
+      'email',
+    ]);
     return res.status(200).json(data);
   } catch (error) {
     console.error(error);
@@ -22,8 +26,7 @@ export const createTodo = async (req, res) => {
 
   if (!content || !user) {
     return res.status(400).json({
-      message:
-        'Faltan datos, la consulta debe contener content y user',
+      message: 'Faltan datos, la consulta debe contener content y user',
       code: 400,
     });
   }
@@ -31,7 +34,7 @@ export const createTodo = async (req, res) => {
   try {
     const data = await ToDoModel.create({
       content,
-      user
+      user,
     });
     return res.status(200).json(data);
   } catch (error) {
@@ -43,9 +46,9 @@ export const createTodo = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateTodo = async (req, res) => {
   const payload = req.body;
-  const { userId } = req.params;
+  const { todoId } = req.params;
 
   if (Object.keys(payload).length === 0) {
     return res.status(400).json({
@@ -55,10 +58,40 @@ export const updateUser = async (req, res) => {
   }
 
   try {
-    const data = await ToDoModel.findByIdAndUpdate(userId, payload);
+    const data = await ToDoModel.findByIdAndUpdate(todoId, payload, {
+      new: true,
+    }).populate('user', ['id', 'fullName', 'email']);
+    return res.status(200).json(data._doc);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Error al insertar el registro',
+      code: 500,
+    });
+  }
+};
+
+export const updateStateTodo = async (req, res) => {
+  const { status } = req.body;
+  const { todoId } = req.params;
+
+  if (!statusToDoType.find((s) => s === status)) {
+    return res.status(400).json({
+      message: 'Por favor envié un status valido',
+      code: 400,
+    });
+  }
+
+  try {
+    await ToDoModel.findByIdAndUpdate(
+      todoId,
+      { status },
+      {
+        new: true,
+      }
+    );
     return res.status(200).json({
-      ...data,
-      ...payload,
+      message: 'Actualización exitosa',
     });
   } catch (error) {
     console.error(error);
@@ -69,10 +102,10 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
-  const { userId } = req.params;
+export const deleteTodo = async (req, res) => {
+  const { todoId } = req.params;
 
-  if (!userId) {
+  if (!todoId) {
     return res.status(400).json({
       message: 'Por favor envie el id del recurso a eliminar',
       code: 400,
@@ -80,9 +113,9 @@ export const deleteUser = async (req, res) => {
   }
 
   try {
-    await ToDoModel.findByIdAndUpdate(userId, { status: 'inactive' });
+    await ToDoModel.findOneAndDelete(todoId);
     return res.status(200).json({
-      message: 'Usuario eliminado',
+      message: 'ToDo eliminado',
       code: 200,
     });
   } catch (error) {

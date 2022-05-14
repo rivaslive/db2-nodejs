@@ -2,15 +2,17 @@ import express from 'express';
 import {
   getAllTodo,
   createTodo,
-  deleteUser,
-  updateUser,
+  deleteTodo,
+  updateTodo,
+  updateStateTodo
 } from './todo.controller';
 
 const router = express.Router();
 
 router.get('/', getAllTodo); // get all
-router.post('/', createTodo); // create user
-router.put('/:userId', updateUser); // update user
-router.delete('/:userId', deleteUser); // delete user
+router.post('/', createTodo); // create ToDo
+router.put('/:todoId', updateTodo); // update ToDo
+router.delete('/:todoId', deleteTodo); // delete ToDo
+router.post('/state/:todoId', updateStateTodo); // update State ToDo
 
 export default router;
