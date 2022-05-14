@@ -5,6 +5,8 @@ import { pluralName as userModelName } from '../user/user.model';
 const { Schema } = mongoose;
 const { singularName, pluralName } = getModelName('todo');
 
+export const statusToDoType = ['active', 'draft', 'finished'];
+
 const schema = new Schema(
   {
     content: {
@@ -18,7 +20,7 @@ const schema = new Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'finished', 'draft'],
+      enum: statusToDoType,
       default: 'draft',
     },
     finished_at: {
