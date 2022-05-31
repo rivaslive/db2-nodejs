@@ -2,8 +2,31 @@
   "compilerOptions": {
     "module": "ESNEXT",
     "target": "ESNEXT",
-    "baseUrl": "./src"
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": [
+        "./src/Application/*"
+      ],
+      "@config/*": [
+        "./src/config/*"
+      ],
+      "@middlewares/*": [
+        "./src/middlewares/*"
+      ],
+      "@constants/*": [
+        "./src/constants/*"
+      ],
+      "@routes/*": [
+        "./src/Routes/*"
+      ],
+      "@server/*": [
+        "./src/Server/*"
+      ],
+      "@utils/*": [
+        "./src/Utils/*"
+      ]
+    }
   },
-  "include": ["./src"],
+  "include": ["./"],
   "exclude": ["node_modules", "**/node_modules/**"]
 }

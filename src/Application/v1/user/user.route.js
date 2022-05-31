@@ -1,5 +1,5 @@
 import express from 'express';
-import validateMiddleware from 'middleware/validate';
+import validateMiddleware from '@middlewares/validate';
 import {
   getAllUser,
   createUser,
