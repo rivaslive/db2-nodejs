@@ -2,7 +2,8 @@ export default function validateMiddleware(schema) {
   return (req, res, next) => {
     const { body } = req;
 
-    schema.validateAsync(body)
+    schema
+      .validateAsync(body)
       .then(() => next())
       .catch((err) => {
         console.log(err);

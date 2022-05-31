@@ -16,6 +16,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
     "joi": "^17.6.0",

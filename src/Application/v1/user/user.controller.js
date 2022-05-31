@@ -1,3 +1,4 @@
+import encryptPassword from 'Utils/encrypt';
 import UserModel from './user.model';
 
 export const getAllUser = async (req, res) => {
@@ -16,11 +17,12 @@ export const getAllUser = async (req, res) => {
 export const createUser = async (req, res) => {
   const { fullName, email, password } = req.body;
 
-  if (!fullName || !email || !password) {
-    return res.status(400).json({
-      message:
-        'Faltan datos, la consulta debe contener fullName, email y password',
-      code: 400,
+  const newPassword = await encryptPassword.create(password);
+
+  if (!newPassword) {
+    return res.status(500).json({
+      message: 'Error to generate password',
+      code: 500,
     });
   }
 
@@ -28,8 +30,43 @@ export const createUser = async (req, res) => {
     const data = await UserModel.create({
       fullName,
       email,
-      password,
+      password: newPassword,
     });
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Error al insertar el registro',
+      code: 500,
+    });
+  }
+};
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const data = await UserModel.findOne({ email }).select('+password');
+
+    if (!data) {
+      return res.status(404).json({
+        message: 'User not found',
+        code: 404,
+      });
+    }
+
+    const isValidPassword = await encryptPassword.valid(
+      password,
+      data.password
+    );
+
+    if (!isValidPassword) {
+      return res.status(400).json({
+        message: 'Email or password is not correct!',
+        code: 400,
+      });
+    }
+
     return res.status(200).json(data);
   } catch (error) {
     console.error(error);
@@ -55,7 +92,7 @@ export const updateUser = async (req, res) => {
     const data = await UserModel.findByIdAndUpdate(userId, payload);
     return res.status(200).json({
       ...data,
-      ...payload
+      ...payload,
     });
   } catch (error) {
     console.error(error);
@@ -68,13 +105,6 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   const { userId } = req.params;
-
-  if (!userId) {
-    return res.status(400).json({
-      message: 'Por favor envie el id del recurso a eliminar',
-      code: 400,
-    });
-  }
 
   try {
     await UserModel.findByIdAndUpdate(userId, { status: 'inactive' });
