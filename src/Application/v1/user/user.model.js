@@ -17,6 +17,7 @@ const schema = new Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     status: {
       type: String,
@@ -39,9 +40,10 @@ schema.set('toJSON', {
   versionKey: false,
   transform(_doc, ret) {
     delete ret._id;
+    delete ret.password;
   },
 });
 
 // rename name Example to singular Model
-export default mongoose.models[singularName]
-  || mongoose.model(pluralName, schema);
+export default mongoose.models[singularName] ||
+  mongoose.model(pluralName, schema);
