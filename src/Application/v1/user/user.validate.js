@@ -7,12 +7,8 @@ export const createUserSchema = Joi.object({
     .required()
     .error((errors) => {
       errors.forEach((err) => {
-        switch (err.code) {
-          case 'any.required':
-            err.message = 'Por favor ingrese su contraseña';
-            break;
-          default:
-            break;
+        if (err.code === 'any.required') {
+          err.message = 'Por favor ingrese su contraseña';
         }
       });
       return errors;

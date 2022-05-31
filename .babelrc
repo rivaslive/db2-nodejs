@@ -17,7 +17,16 @@
       {
         "root": [
           "./src"
-        ]
+        ],
+        "alias": {
+          "@app": "./src/Application",
+          "@config": "./src/config",
+          "@constants": "./src/constants",
+          "@middlewares": "./src/middlewares",
+          "@routes": "./src/Routes",
+          "@server": "./src/Server",
+          "@utils": "./src/Utils"
+        }
       }
     ]
   ]

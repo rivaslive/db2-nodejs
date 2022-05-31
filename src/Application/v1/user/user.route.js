@@ -1,4 +1,5 @@
 import express from 'express';
+import validateMiddleware from '@middlewares/validate';
 import {
   getAllUser,
   createUser,
@@ -6,7 +7,6 @@ import {
   updateUser,
 } from './user.controller';
 import { createUserSchema, updateUserSchema } from './user.validate';
-import validateMiddleware from '../../../middleware/validate';
 
 const router = express.Router();
 
