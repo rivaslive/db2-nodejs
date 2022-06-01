@@ -5,7 +5,7 @@ import {
   createTodo,
   deleteTodo,
   updateTodo,
-  updateStateTodo,
+  updateStateTodo, getTodoById,
 } from './todo.controller';
 import {
   createTodoSchema,
@@ -16,6 +16,7 @@ import {
 const router = express.Router();
 
 router.get('/', getAllTodo); // get all
+router.get('/:todoId', getTodoById); // get all
 router.post('/', validateMiddleware(createTodoSchema), createTodo); // create ToDo
 router.put('/:todoId', validateMiddleware(updateTodoSchema), updateTodo); // update ToDo
 router.delete('/:todoId', deleteTodo); // delete ToDo
