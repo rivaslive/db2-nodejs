@@ -1,22 +1,15 @@
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import path from 'path';
+import getConfig from '../config';
 
-const rootPath = path.resolve('keys');
-
-const certPub = fs.readFileSync(`${rootPath}/key-public.pem`);
-const certPriv = fs.readFileSync(`${rootPath}/key-private.pem`);
-
+const { jwtKey } = getConfig();
 // eslint-disable-next-line
 const create = async (user) => {
-  return jwt.sign(user, certPriv, {
-    algorithm: 'RS256',
-  });
+  return jwt.sign(user, jwtKey);
 };
 
 const valid = async (token) => {
   try {
-    const user = await jwt.verify(token, certPub);
+    const user = await jwt.verify(token, jwtKey);
     return {
       errors: null,
       data: user,

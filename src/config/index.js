@@ -7,8 +7,8 @@ const config = () => ({
   port,
   rootPath,
   publicPath: path.join(rootPath, 'public/uploads/'),
-  serverUrl: process.env.SERVER_URL || `http://localhost:${port}`,
-  jwtKey: process.env.JWT_KEY || 'shhhhh',
+  serverUrl: process.env.APP_SERVER_URL || `http://localhost:${port}`,
+  jwtKey: process.env.APP_JWT_KEY || 'shhhhh',
   database: {
     uri: process.env.APP_DATABASE_URL,
     options: {},
