@@ -1,15 +1,38 @@
 import path from 'path';
 import getConfig from '@config';
+import imageToBase64 from '@utils/imageToBase64';
+import UploadModel from './upload.model';
 
 const { publicPath, serverUrl } = getConfig();
 
-export const uploadAsset = (req, res) => {
-  const { file } = req;
-  res.status(200).json({
-    filename: file.originalname,
-    mimetype: file.mimetype,
-    url: `${serverUrl}/v1/public/${file.filename}`,
-  });
+export const uploadAsset = async (req, res) => {
+  const { file, user } = req;
+
+  try {
+    const thumbnail = await imageToBase64(file);
+    const data = await UploadModel.create({
+      thumbnail,
+      mimetype: file?.mimetype,
+      pathname: file?.destination,
+      filename: file?.filename,
+      created_by: user?.id,
+    });
+
+    return res.status(200).json({
+      id: data.id,
+      filename: file.originalname,
+      mimetype: file.mimetype,
+      thumbnail,
+      url: `${serverUrl}/v1/public/${file.filename}`,
+    });
+  } catch (e) {
+    console.log(e);
+
+    return res.status(500).json({
+      message: 'Internal Server Error',
+      code: 500,
+    });
+  }
 };
 
 export const getImage = (req, res) => {

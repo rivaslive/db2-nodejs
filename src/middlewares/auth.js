@@ -2,7 +2,7 @@ import auth from '@utils/auth';
 
 const verifyAuth = async (req, res, next) => {
   const authorization = req.header('authorization') ?? '';
-  const authArr = authorization.split('Bearer ');
+  const authArr = authorization.split('Bearer '); // no existe Bearer
 
   if (!authorization || authArr.length === 1) {
     return res.status(401).json({
@@ -12,15 +12,15 @@ const verifyAuth = async (req, res, next) => {
   }
 
   const [token] = authArr.filter((f) => f);
-  const user = await auth.valid(token);
+  const { data, errors } = await auth.valid(token);
 
-  if (user) {
-    req.user = user;
+  if (data && !errors) {
+    req.user = data;
     return next();
   }
 
   return res.status(403).json({
-    message: 'Token expired!',
+    message: errors?.message,
     code: 403,
   });
 
