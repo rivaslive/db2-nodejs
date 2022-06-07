@@ -21,15 +21,31 @@ export const getAllTodo = async (req, res) => {
   }
 };
 
-export const createTodo = async (req, res) => {
-  const { content, user } = req.body;
+export const getTodoById = async (req, res) => {
+  const { todoId } = req.params;
+  const { raw = false } = req.query;
 
-  if (!content || !user) {
-    return res.status(400).json({
-      message: 'Faltan datos, la consulta debe contener content y user',
-      code: 400,
+  try {
+    const data = await ToDoModel.findById(todoId).populate('user', [
+      'id',
+      'fullName',
+      'email',
+    ]);
+    if (raw) {
+      return res.send(data.content);
+    }
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Error al obtener los datos',
+      code: 500,
     });
   }
+};
+
+export const createTodo = async (req, res) => {
+  const { content, user } = req.body;
 
   try {
     const data = await ToDoModel.create({
@@ -49,13 +65,6 @@ export const createTodo = async (req, res) => {
 export const updateTodo = async (req, res) => {
   const payload = req.body;
   const { todoId } = req.params;
-
-  if (Object.keys(payload).length === 0) {
-    return res.status(400).json({
-      message: 'Faltan datos o no a enviado el ID',
-      code: 400,
-    });
-  }
 
   try {
     const data = await ToDoModel.findByIdAndUpdate(todoId, payload, {
@@ -104,13 +113,6 @@ export const updateStateTodo = async (req, res) => {
 
 export const deleteTodo = async (req, res) => {
   const { todoId } = req.params;
-
-  if (!todoId) {
-    return res.status(400).json({
-      message: 'Por favor envie el id del recurso a eliminar',
-      code: 400,
-    });
-  }
 
   try {
     await ToDoModel.findOneAndDelete(todoId);

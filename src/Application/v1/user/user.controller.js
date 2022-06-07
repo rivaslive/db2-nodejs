@@ -1,4 +1,5 @@
-import encryptPassword from 'Utils/encrypt';
+import encryptPassword from '@utils/encrypt';
+import auth from '@utils/auth';
 import UserModel from './user.model';
 
 export const getAllUser = async (req, res) => {
@@ -14,7 +15,7 @@ export const getAllUser = async (req, res) => {
   }
 };
 
-export const createUser = async (req, res) => {
+export const signUp = async (req, res) => {
   const { fullName, email, password } = req.body;
 
   const newPassword = await encryptPassword.create(password);
@@ -66,8 +67,13 @@ export const login = async (req, res) => {
         code: 400,
       });
     }
+    const newData = data.toJSON();
 
-    return res.status(200).json(data);
+    const jwt = await auth.create(newData);
+    return res.status(200).json({
+      ...newData,
+      jwt,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -91,7 +97,7 @@ export const updateUser = async (req, res) => {
   try {
     const data = await UserModel.findByIdAndUpdate(userId, payload);
     return res.status(200).json({
-      ...data,
+      ...data._doc,
       ...payload,
     });
   } catch (error) {

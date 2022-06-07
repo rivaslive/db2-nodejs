@@ -1,11 +1,13 @@
-import path from 'path';
 import multer from 'multer';
+import getConfig from '@config';
+
+const { publicPath } = getConfig();
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../public/uploads/'));
+  destination(req, file, cb) {
+    cb(null, publicPath);
   },
-  filename: function (req, file, cb) {
+  filename(req, file, cb) {
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     const filename = `${uniqueSuffix}-${file.originalname}`;
     cb(null, filename);
