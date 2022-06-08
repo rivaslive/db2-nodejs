@@ -18,7 +18,7 @@ const initializeServer = async (routes) => {
   // set urls
   app.use(routes);
 
-  // set urls
+  // eslint-disable-next-line
   app.get('/', (_req, res) => {
     return res.send('</h1>This is our API</h1>');
   });
