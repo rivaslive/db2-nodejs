@@ -1,4 +1,5 @@
 import express from 'express';
+import verifyAuth from '@middlewares/auth';
 import validateMiddleware from '@middlewares/validate';
 import {
   getAllUser,
@@ -15,10 +16,10 @@ import {
 
 const router = express.Router();
 
-router.get('/', getAllUser); // get all
+router.get('/', verifyAuth, getAllUser); // get all
 router.post('/signup', validateMiddleware(createUserSchema), signUp); // create user
 router.post('/login', validateMiddleware(LoginUserSchema), login); // create user
-router.put('/:userId', validateMiddleware(updateUserSchema), updateUser); // update user
-router.delete('/:userId', deleteUser); // delete user
+router.put('/:userId', verifyAuth, validateMiddleware(updateUserSchema), updateUser); // update user
+router.delete('/:userId', verifyAuth, deleteUser); // delete user
 
 export default router;
