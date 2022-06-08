@@ -1,4 +1,5 @@
 import express from 'express';
+import verifyAuth from '@middlewares/auth';
 import validateMiddleware from '@middlewares/validate';
 import {
   getAllTodo,
@@ -15,13 +16,14 @@ import {
 
 const router = express.Router();
 
-router.get('/', getAllTodo); // get all
-router.get('/:todoId', getTodoById); // get all
-router.post('/', validateMiddleware(createTodoSchema), createTodo); // create ToDo
-router.put('/:todoId', validateMiddleware(updateTodoSchema), updateTodo); // update ToDo
-router.delete('/:todoId', deleteTodo); // delete ToDo
+router.get('/', verifyAuth, getAllTodo); // get all
+router.get('/:todoId', verifyAuth, getTodoById); // get all
+router.post('/', verifyAuth, validateMiddleware(createTodoSchema), createTodo); // create ToDo
+router.put('/:todoId', verifyAuth, validateMiddleware(updateTodoSchema), updateTodo); // update ToDo
+router.delete('/:todoId', verifyAuth, deleteTodo); // delete ToDo
 router.post(
   '/state/:todoId',
+  verifyAuth,
   validateMiddleware(updateStateTodoSchema),
   updateStateTodo
 );
